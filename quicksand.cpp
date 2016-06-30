@@ -49,7 +49,7 @@ QuickSandHeader::QuickSandHeader(const char* header, unsigned int shift){
   if (!(shift&32))
     size=1<<shift;
   halfSize=size>>1;
-  field1=halfSize-1; //before field1=halfSize-2;
+  field1=halfSize-2; //before field1=halfSize-2; //-1 was 
   unsigned char hash_buff[32];
   crypto_hash_sha256(hash_buff, (unsigned char*)header,strlen(header));
   unsigned long long res = u8ToU64(hash_buff);
@@ -114,7 +114,7 @@ unsigned long long QuickSandHeader::sipHash24(unsigned long long msg){
   return v0^v1^v2^v3;
 }
 unsigned long long QuickSandHeader::sipNode(unsigned int seed, unsigned int parity){
-  return (unsigned int)(sipHash24(parity+2*seed))&field1;
+  return (unsigned int)(sipHash24(parity+2*seed))&field1;  
 }
 QuickSandHeader::sipNoderes QuickSandHeader::sipEdge(unsigned int msg){
   sipNoderes res{0,0};

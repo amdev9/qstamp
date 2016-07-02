@@ -5,7 +5,7 @@ using namespace quicksand;
 static inline std::string generateHeader(std::vector<unsigned int>& in){
   std::string result;
   for (auto& i: in) {
-    result+=std::to_string(i)+"=";  
+    result+=std::to_string(i)+"-";// "|" " " " "0" "" ","; // "="   
   }
   result.pop_back();
   unsigned char hash_buff[32];  //32

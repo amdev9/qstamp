@@ -4,21 +4,31 @@ using namespace quicksand;
 
 static inline std::string generateHeader(std::vector<unsigned int>& in){
   std::string result;
-  for (auto& i: in)
-    result+=std::to_string(i)+"=";
+  for (auto& i: in) {
+    result+=std::to_string(i)+"=";  
+  }
   result.pop_back();
-  unsigned char hash_buff[32];
+  unsigned char hash_buff[32];  //32
   crypto_hash_sha256(hash_buff, (unsigned char*)result.c_str(),result.length());
   std::stringstream ss;
   ss << std::hex << std::setfill('0');
-  for (int i = 0; i < 32; ++i)
+  for (int i = 0; i < 32; ++i)  
   {
         ss << std::setw(2) << static_cast<unsigned>(hash_buff[i]);
   }
+
+
+
+ printf("%s\n",ss.str().c_str());
   return ss.str();
 };
+
 std::string quicksand::generateStamp(unsigned int iterations, unsigned int size,
-    unsigned int edgePercentage, unsigned int shift, std::string header){
+                              unsigned int edgePercentage, unsigned int shift, std::string header)
+
+{
+  printf("%s\n",header.c_str());
+
   std::vector<std::vector<unsigned int>> result;
   std::stringstream ss;
   QuickSandSolver qs(size,edgePercentage);
@@ -27,8 +37,10 @@ std::string quicksand::generateStamp(unsigned int iterations, unsigned int size,
     QuickSandHeader qh(header.c_str(),shift);
     std::vector<unsigned int> solved = qs.solve(&qh);
     if (solved.size() == size) {
-      header =  generateHeader(solved);
+      header =  generateHeader(solved); //here problem
       result.push_back(solved);
+
+       //break;
     }
     else
       curIter--;
@@ -40,30 +52,43 @@ std::string quicksand::generateStamp(unsigned int iterations, unsigned int size,
       if (j!=result[i].size()-1)
         ss<<",";
     }
-    if (i!=result.size()-1)
+    if (i!=result.size()-1) {
       ss<<"|";
+      // break;
+      // break;
+    }
   }
   return ss.str();
 }
 QuickSandHeader::QuickSandHeader(const char* header, unsigned int shift){
   if (!(shift&32))
-    size=1<<shift;
+    size=1LL<<shift; //1
   halfSize=size>>1;
-  field1=halfSize-2; //before field1=halfSize-2; //-1 was 
+  field1=halfSize-1; //before field1=halfSize-2; //-1 was 
   unsigned char hash_buff[32];
   crypto_hash_sha256(hash_buff, (unsigned char*)header,strlen(header));
   unsigned long long res = u8ToU64(hash_buff);
-  unsigned long long res2 = u8ToU64(&hash_buff[8]);
+  unsigned long long res2 = u8ToU64(hash_buff+8);//before (&hash_buff[8]);
   data[0]=res^0x736f6d6570736575ULL;  //before  0x736f6d6670736575ULL; 0x736f6d6570736575ULL
   data[1]=res2^0x646f72616e646f6dULL; //0x646f72616e646f6dULL
   data[2]=res^0x6c7967656e657261ULL;  //0x6c7967656e657261ULL
   data[3]=res2^0x7465646279746573ULL; //0x7465646279746573ULL
 }
 unsigned long long QuickSandHeader::u8ToU64(const unsigned char* data){
-  unsigned long long res;
+  unsigned long long res;    //before same as down
   memcpy(&res,data,8);
-  return res;
+    return res;
+
+  // return (((unsigned long long)(data[0] & 0xff)) |
+  //         ((unsigned long long)(data[1] & 0xff) << 8) |
+  //         ((unsigned long long)(data[2] & 0xff) << 16) |
+  //         ((unsigned long long)(data[3] & 0xff) << 24) |
+  //         ((unsigned long long)(data[4] & 0xff) << 32) |
+  //         ((unsigned long long)(data[5] & 0xff) << 40) |
+  //         ((unsigned long long)(data[6] & 0xff) << 48) |
+  //         ((unsigned long long)(data[7] & 0xff) << 56));
 }
+
 void QuickSandHeader::sipRound(unsigned long long& v0 , unsigned long long& v1, unsigned long long& v2, unsigned long long& v3){
   //before
   // v0 += v1;
@@ -97,7 +122,7 @@ void QuickSandHeader::sipRound(unsigned long long& v0 , unsigned long long& v1, 
 
 }
 
-unsigned long long QuickSandHeader::sipHash24(unsigned long long msg){
+unsigned long long QuickSandHeader::sipHash24(unsigned long long msg){ //+
   auto v0=data[0];
   auto v1=data[1];
   auto v2=data[2];
@@ -213,13 +238,13 @@ void QuickSandSolver::recoverSolution(std::vector<unsigned int>& res, unsigned i
     index1--;
   }
   while(index2){
-    set.insert(std::make_pair(v2[(index2-1)|1], v2[index2&0xfffffffe]));
+    set.insert(std::make_pair(v2[(index2-1)|1], v2[index2&0xfffffffe]));//0xFFFFFFFE
     index2--;
   }
   if (!numCycles)
     return;
   unsigned int cycle=0;
-  unsigned int i =0;
+  unsigned int i = 0;
   do {
     auto hs = qhInstance->getHalfSize();
     auto res1 = qhInstance->sipNode(cycle,1);

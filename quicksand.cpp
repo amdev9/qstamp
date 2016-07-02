@@ -19,7 +19,7 @@ static inline std::string generateHeader(std::vector<unsigned int>& in){
 
 
 
- printf("%s\n",ss.str().c_str());
+ // printf("%s\n",ss.str().c_str());
   return ss.str();
 };
 
@@ -27,7 +27,7 @@ std::string quicksand::generateStamp(unsigned int iterations, unsigned int size,
                               unsigned int edgePercentage, unsigned int shift, std::string header)
 
 {
-  printf("%s\n",header.c_str());
+  // printf("%s\n",header.c_str());
 
   std::vector<std::vector<unsigned int>> result;
   std::stringstream ss;

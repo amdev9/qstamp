@@ -5,7 +5,7 @@ using namespace quicksand;
 static inline std::string generateHeader(std::vector<unsigned int>& in){
   std::string result;
   for (auto& i: in) {
-    result+=std::to_string(i)+"-";// "|" " " " "0" "" ","; // "="   
+    result+=std::to_string(i) + "-"; 
   }
   result.pop_back();
   unsigned char hash_buff[32];  //32
@@ -16,19 +16,14 @@ static inline std::string generateHeader(std::vector<unsigned int>& in){
   {
         ss << std::setw(2) << static_cast<unsigned>(hash_buff[i]);
   }
-
-
-
- // printf("%s\n",ss.str().c_str());
+ 
   return ss.str();
 };
 
 std::string quicksand::generateStamp(unsigned int iterations, unsigned int size,
                               unsigned int edgePercentage, unsigned int shift, std::string header)
 
-{
-  // printf("%s\n",header.c_str());
-
+{ 
   std::vector<std::vector<unsigned int>> result;
   std::stringstream ss;
   QuickSandSolver qs(size,edgePercentage);
@@ -37,10 +32,10 @@ std::string quicksand::generateStamp(unsigned int iterations, unsigned int size,
     QuickSandHeader qh(header.c_str(),shift);
     std::vector<unsigned int> solved = qs.solve(&qh);
     if (solved.size() == size) {
-      header =  generateHeader(solved); //here problem
+      header =  generateHeader(solved); 
       result.push_back(solved);
 
-       //break;
+ 
     }
     else
       curIter--;
@@ -53,58 +48,34 @@ std::string quicksand::generateStamp(unsigned int iterations, unsigned int size,
         ss<<",";
     }
     if (i!=result.size()-1) {
-      ss<<"|";
-      // break;
-      // break;
+      ss<<"|"; 
     }
   }
   return ss.str();
 }
 QuickSandHeader::QuickSandHeader(const char* header, unsigned int shift){
   if (!(shift&32))
-    size=1LL<<shift; //1
+    size=1LL<<shift;  
   halfSize=size>>1;
-  field1=halfSize-1; //before field1=halfSize-2; //-1 was 
+  field1=halfSize-1;  
   unsigned char hash_buff[32];
   crypto_hash_sha256(hash_buff, (unsigned char*)header,strlen(header));
   unsigned long long res = u8ToU64(hash_buff);
-  unsigned long long res2 = u8ToU64(hash_buff+8);//before (&hash_buff[8]);
-  data[0]=res^0x736f6d6570736575ULL;  //before  0x736f6d6670736575ULL; 0x736f6d6570736575ULL
-  data[1]=res2^0x646f72616e646f6dULL; //0x646f72616e646f6dULL
-  data[2]=res^0x6c7967656e657261ULL;  //0x6c7967656e657261ULL
-  data[3]=res2^0x7465646279746573ULL; //0x7465646279746573ULL
+  unsigned long long res2 = u8ToU64(hash_buff+8); 
+  data[0]=res^0x736f6d6570736575ULL;   
+  data[1]=res2^0x646f72616e646f6dULL;  
+  data[2]=res^0x6c7967656e657261ULL;   
+  data[3]=res2^0x7465646279746573ULL;  
 }
 unsigned long long QuickSandHeader::u8ToU64(const unsigned char* data){
   unsigned long long res;    //before same as down
   memcpy(&res,data,8);
     return res;
-
-  // return (((unsigned long long)(data[0] & 0xff)) |
-  //         ((unsigned long long)(data[1] & 0xff) << 8) |
-  //         ((unsigned long long)(data[2] & 0xff) << 16) |
-  //         ((unsigned long long)(data[3] & 0xff) << 24) |
-  //         ((unsigned long long)(data[4] & 0xff) << 32) |
-  //         ((unsigned long long)(data[5] & 0xff) << 40) |
-  //         ((unsigned long long)(data[6] & 0xff) << 48) |
-  //         ((unsigned long long)(data[7] & 0xff) << 56));
+ 
 }
 
 void QuickSandHeader::sipRound(unsigned long long& v0 , unsigned long long& v1, unsigned long long& v2, unsigned long long& v3){
-  //before
-  // v0 += v1;
-  // v1 = rotateLeft(v1, 0xe);
-  // v1 ^= v0;
-  // v0 = rotateLeft(v0, 32);
-  // v2 += v3;
-  // v3 = rotateLeft(v3, 0xf);
-  // v3 ^= v2;
-  // v0 += v3;
-  // v3 = rotateLeft(v3, 21);
-  // v2 += v1;
-  // v1 = rotateLeft(v1, 0x10);
-  // v3 ^= v0;
-  // v2 = rotateLeft(v2, 32);
-  // v1 ^= v2;
+   
   v0 += v1; 
   v2 += v3; 
   v1 = rotateLeft(v1,13); 
@@ -225,8 +196,8 @@ unsigned int QuickSandSolver::path(unsigned int value, std::vector<unsigned int>
   }
   for (i=8191;i>0;i--)
     if (v1[i]==value)
-      throw std::runtime_error("Illegal cycle has occured");
-  throw std::runtime_error("Maximum path length was exceeded");
+      throw std::runtime_error("[-] Illegal cycle has occured");
+  throw std::runtime_error("[-] Maximum path length was exceeded");
 }
 void QuickSandSolver::recoverSolution(std::vector<unsigned int>& res, unsigned int index1, unsigned int index2, std::vector<unsigned int>& v1, std::vector<unsigned int>& v2, QuickSandHeader* qhInstance, unsigned int size, unsigned long long numCycles){
   auto var1 = numCycles;

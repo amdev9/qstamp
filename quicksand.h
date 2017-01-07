@@ -8,11 +8,12 @@
 #include <sodium/crypto_hash_sha256.h>
 #include <stdexcept>
 
-namespace quicksand{
+namespace quicksand {
 
   std::string generateStamp(unsigned int iterations, unsigned int size,
       unsigned int edgePercentage, unsigned int shift, std::string header);
-  class QuickSandHeader{
+
+  class QuickSandHeader {
     public:
       typedef struct {
         unsigned int node1;
@@ -36,7 +37,8 @@ namespace quicksand{
       sipNoderes sipEdge(unsigned int msg);
       QuickSandHeader(const char* header, unsigned int shift);
   };
-  class QuickSandSolver{
+
+  class QuickSandSolver {
     private:
       unsigned char stopFlag;
       unsigned int size;

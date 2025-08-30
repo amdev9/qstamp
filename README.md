@@ -1,4 +1,4 @@
-Sniff results for cyckoo cycle registration
+Sniff results (or in other words - <b>params</b>) for cyckoo cycle registration
 
 ``` {"status": "ok", "shift": 18, "header": "VcgkAma6zq7wP4TsRGfESjoLQtriNOIB", "edges": 100, "iterations": 10, "size": 42} ```
 
